@@ -1,71 +1,65 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './src/screens/LoginScreen';
+import SignupScreen from './src/screens/SignupScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import CreateRoomScreen from './src/screens/CreateRoomScreen';
+import JoinRoomScreen from './src/screens/JoinRoomScreen';
+import MovieSwipeScreen from './src/screens/MovieSwipeScreen';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const LoginScreen = ({ onSignup }: { onSignup: () => void }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    // Add real login logic here
-    alert(`Logging in with ${email}`);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput value={email} onChangeText={setEmail} placeholder="Email" style={styles.input} />
-      <TextInput value={password} onChangeText={setPassword} placeholder="Password" secureTextEntry style={styles.input} />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Go to Signup" onPress={onSignup} />
-    </View>
-  );
+export type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+  Home: undefined;
+  CreateRoom: undefined;
+  JoinRoom: undefined;
+  MovieSwipe: undefined;
 };
 
-const SignupScreen = ({ onBack }: { onBack: () => void }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignup = () => {
-    // Add real signup logic here
-    alert(`Signing up with ${email}`);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput value={email} onChangeText={setEmail} placeholder="Email" style={styles.input} />
-      <TextInput value={password} onChangeText={setPassword} placeholder="Password" secureTextEntry style={styles.input} />
-      <Button title="Sign Up" onPress={handleSignup} />
-      <Button title="Back to Login" onPress={onBack} />
-    </View>
-  );
-};
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [showSignup, setShowSignup] = useState(false);
-  return showSignup ? (
-    <SignupScreen onBack={() => setShowSignup(false)} />
-  ) : (
-    <LoginScreen onSignup={() => setShowSignup(true)} />
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const LoginWrapper = (props: NativeStackScreenProps<RootStackParamList, 'Login'>) => (
+    <LoginScreen onSignup={() => props.navigation.navigate('Signup')} onLoggedIn={() => setLoggedIn(true)} />
+  );
+
+  const SignupWrapper = (props: NativeStackScreenProps<RootStackParamList, 'Signup'>) => (
+    <SignupScreen onBack={() => props.navigation.goBack()} onSignedUp={() => setLoggedIn(true)} />
+  );
+
+  const HomeWrapper = (props: NativeStackScreenProps<RootStackParamList, 'Home'>) => (
+    <HomeScreen onCreateRoom={() => props.navigation.navigate('CreateRoom')} onJoinRoom={() => props.navigation.navigate('JoinRoom')} />
+  );
+
+  const CreateRoomWrapper = (props: NativeStackScreenProps<RootStackParamList, 'CreateRoom'>) => (
+    <CreateRoomScreen onRoomCreated={() => props.navigation.navigate('MovieSwipe')} />
+  );
+
+  const JoinRoomWrapper = (props: NativeStackScreenProps<RootStackParamList, 'JoinRoom'>) => (
+    <JoinRoomScreen onJoined={() => props.navigation.navigate('MovieSwipe')} />
+  );
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {!loggedIn ? (
+          <>
+            <Stack.Screen name="Login" component={LoginWrapper} options={{ headerShown: false }} />
+            <Stack.Screen name="Signup" component={SignupWrapper} options={{ headerShown: false }} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Home" component={HomeWrapper} options={{ headerShown: false }} />
+            <Stack.Screen name="CreateRoom" component={CreateRoomWrapper} options={{ title: 'Create Room' }} />
+            <Stack.Screen name="JoinRoom" component={JoinRoomWrapper} options={{ title: 'Join Room' }} />
+            <Stack.Screen name="MovieSwipe" component={MovieSwipeScreen} options={{ title: 'Movies' }} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center'
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 4
-  }
-});

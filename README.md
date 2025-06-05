@@ -1,18 +1,20 @@
 # MovieMatch
 
-This project now uses React Native written in TypeScript. It provides simple login and signup screens to help you integrate authentication in a mobile app.
+This React Native app demonstrates a basic flow for a movie matching application.
+It uses Firebase for authentication and Firestore for storing room data. Movies
+are fetched from the TMDB API and presented with simple like/dislike buttons.
 
 ## Getting Started
 
-1. Install dependencies:
+1. Install dependencies
    ```bash
    npm install
    ```
-2. To run the Metro bundler:
+2. Start the Metro bundler
    ```bash
    npm start
    ```
-3. To launch on Android:
+3. Launch on Android
    ```bash
    npm run android
    ```
@@ -21,4 +23,5 @@ This project now uses React Native written in TypeScript. It provides simple log
    npm run ios
    ```
 
-The forms currently show alert messages on submission. Replace these with calls to your backend or add Google sign‑in as needed.
+Configure `src/firebase.ts` with your Firebase credentials and add a TMDB API key
+in `src/screens/MovieSwipeScreen.tsx` before running the app.
