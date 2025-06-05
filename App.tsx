@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator id={undefined}>
         {!loggedIn ? (
           <>
             <Stack.Screen name="Login" component={LoginWrapper} options={{ headerShown: false }} />
